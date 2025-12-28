@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<mujoco model="040_rack_2">
+  <asset>
+    <mesh name="040_rack_2_mesh" file="040_rack_2.stl" scale="1. 1. 1."/>
+    <mesh name="040_rack_2_part_0" file="decomposed/040_rack_2_decomposed_0.stl" scale="1. 1. 1."/>
+    <mesh name="040_rack_2_part_1" file="decomposed/040_rack_2_decomposed_1.stl" scale="1. 1. 1."/>
+    <mesh name="040_rack_2_part_2" file="decomposed/040_rack_2_decomposed_2.stl" scale="1. 1. 1."/>
+  </asset>
+  <worldbody>
+    <body name="040_rack_2">
+      <geom name="040_rack_2_geom_0" type="mesh" mesh="040_rack_2_part_0"/>
+      <geom name="040_rack_2_geom_1" type="mesh" mesh="040_rack_2_part_1"/>
+      <geom name="040_rack_2_geom_2" type="mesh" mesh="040_rack_2_part_2"/>
+    </body>
+  </worldbody>
+</mujoco>

@@ -1,0 +1,11 @@
+<mujoco model="040_rack_1">
+  <asset>
+    <mesh name="040_rack_collision_1" file="040_rack_0.stl" scale="1. 1. 1."/> 
+  </asset>
+
+  <worldbody>
+<body name="040_rack_1">
+  <geom name="040_rack_collision_1" type="mesh" mesh="040_rack_collision_1" />
+</body>
+  </worldbody>
+</mujoco>

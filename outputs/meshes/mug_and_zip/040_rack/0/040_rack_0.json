@@ -1,0 +1,25 @@
+{
+  "mesh_path": "/home/yuan/ssd/datagen/datagen_niubi_v1/assets/objects/040_rack/0/040_rack_0.stl",
+  "bounding_box": {
+    "x": 0.1276246525448021,
+    "y": 0.103659466160643,
+    "z": 0.21602571332463003
+  },
+  "keypoints": [
+    {
+      "position": [
+      -0.07228060802646243,
+      0.003257133640025141,
+      0.17497774739228172
+    ],
+    "description": "rack branch"
+  },
+  {
+    "position": [
+      -0.0029790348839111975,
+      0.004088846558877678,
+      0.110753
+    ],
+    "description": "rack center"
+  }]
+}

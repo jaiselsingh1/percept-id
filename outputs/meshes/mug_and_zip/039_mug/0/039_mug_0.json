@@ -1,0 +1,74 @@
+{
+  "mesh_path": "/home/yuan/ssd/datagen/datagen_niubi_v1/assets/objects/039_mug/0/039_mug_0.stl",
+  "bounding_box": {
+    "x": 1.3831339113562966,
+    "y": 1.9313029700853392,
+    "z": 1.4100339737031011
+  },
+  "keypoints": [
+    {
+      "position": [
+        -0.05140880686323804,
+        -0.6078166753912543,
+        0.6905952374629767
+      ],
+      "description": "mug handle top"
+    },
+    {
+      "position": [
+        0.02000179308941163,
+        -0.9603671201252463,
+        0.13221314823701144
+      ],
+      "description": "mug handle outside middle"
+    },
+    {
+      "position": [
+        0.00875045267426742,
+        -0.5669949373793619,
+        -0.3474812599954451
+      ],
+      "description": "mug handle bottom"
+    },
+    {
+      "position": [
+        -0.6195090874890338,
+        0.44883303008943454,
+        0.6874608032424114
+      ],
+      "description": "mug opening left"
+    },
+    {
+      "position": [
+        0.0650892190742628,
+        0.9615061046690805,
+        0.6435586982814602
+      ],
+      "description": "mug opening front"
+    },
+    {
+      "position": [
+        0.6783041671151013,
+        0.17961342143927628,
+        0.6865431972398286
+      ],
+      "description": "mug opening right"
+    },
+    {
+      "position": [
+        0.032199721462361164,
+        -0.4604073384778512,
+        0.6387841790360923
+      ],
+      "description": "mug opening back"
+    },
+    {
+      "position": [
+        -0.6913870350670286,
+        0.272750943656353,
+        0.3929670507343982
+      ],
+      "description": "mug wall point for grasp"
+    }
+  ]
+}

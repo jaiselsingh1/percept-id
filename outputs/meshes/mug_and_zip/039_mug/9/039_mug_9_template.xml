@@ -1,0 +1,17 @@
+<mujoco model="039_mug_9">
+  <asset>
+    <mesh name="039_mug_collision_9" file="039_mug_9.stl" scale="0.07 0.07 0.07"/> 
+  </asset>
+
+  <worldbody>
+<body name="039_mug_9">
+  <geom name="039_mug_collision_9" type="mesh" mesh="039_mug_collision_9" />
+  <site name="039_mug_9_keypoints_0" pos="0.0 0.061611900000000004 0.10091130000000001" size="0.01"/>
+  <site name="039_mug_9_keypoints_1" pos="-0.038476760000000006 0.026622470000000002 0.10090073000000001" size="0.01"/>
+  <site name="039_mug_9_keypoints_2" pos="0.0 -0.0349678 0.07149100000000001" size="0.01"/>
+  <site name="039_mug_9_keypoints_3" pos="0.0 0.022594740000000002 6.86e-06" size="0.01"/>
+  <site name="039_mug_9_keypoints_4" pos="0.0 0.02367596 7.14e-06" size="0.01"/>
+  <site name="039_mug_9_keypoints_5" pos="0.0 1.5680000000000002e-05 0.051907520000000006" size="0.01"/>
+</body>
+  </worldbody>
+</mujoco>

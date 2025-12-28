@@ -1,0 +1,26 @@
+{
+  "mesh_path": "/home/yuan/codegen/Codegen/codegen_datagen/data/assets/objects/040_rack/2/040_rack_2.stl",
+  "bounding_box": {
+    "x": 0.1608296627825081,
+    "y": 0.15776827931404114,
+    "z": 0.345200002193451
+  },
+  "keypoints": [
+    {
+      "position": [
+        0.0813193044088446,
+        0.0023101237074792205,
+        0.15456832877424465
+      ],
+      "description": "Rack Branch Tip"
+    },
+    {
+      "position": [
+        -0.011227726306828332,
+        -0.002060913474112831,
+        0.11152784015413221
+      ],
+      "description": "Rack Branch Base"
+    }
+  ]
+}

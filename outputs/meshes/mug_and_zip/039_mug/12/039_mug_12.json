@@ -1,0 +1,29 @@
+[
+  {
+    "position": [
+      -0.6406474717640708,
+      0.315385570613626,
+      0.7104324861761563
+    ],
+    "description": "mug left",
+    "source_keypoint": 1
+  },
+  {
+    "position": [
+      0.6227435363071879,
+      0.3119895266170907,
+      0.7011992519167806
+    ],
+    "description": "mug right",
+    "source_keypoint": 2
+  },
+  {
+    "position": [
+      -0.051097690232816,
+      0.14023878156556213,
+      -0.6527233220460145
+    ],
+    "description": "mug bottom",
+    "source_keypoint": 3
+  }
+]

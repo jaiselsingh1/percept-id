@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<mujoco model="039_mug_1">
+  <asset>
+    <mesh name="039_mug_1_mesh" file="039_mug_1.stl" scale="0.065 0.065 0.065"/>
+    <mesh name="039_mug_part_0" file="/home/yuan/ssd/datagen/datagen_July24/assets/objects/039_mug/1/decomposed/039_mug_1_decomposed_0.stl" scale="0.065 0.065 0.065"/>
+    <mesh name="039_mug_part_1" file="/home/yuan/ssd/datagen/datagen_July24/assets/objects/039_mug/1/decomposed/039_mug_1_decomposed_1.stl" scale="0.065 0.065 0.065"/>
+    <mesh name="039_mug_part_2" file="/home/yuan/ssd/datagen/datagen_July24/assets/objects/039_mug/1/decomposed/039_mug_1_decomposed_2.stl" scale="0.065 0.065 0.065"/>
+    <mesh name="039_mug_part_3" file="/home/yuan/ssd/datagen/datagen_July24/assets/objects/039_mug/1/decomposed/039_mug_1_decomposed_3.stl" scale="0.065 0.065 0.065"/>
+    <mesh name="039_mug_part_4" file="/home/yuan/ssd/datagen/datagen_July24/assets/objects/039_mug/1/decomposed/039_mug_1_decomposed_4.stl" scale="0.065 0.065 0.065"/>
+    <mesh name="039_mug_part_5" file="/home/yuan/ssd/datagen/datagen_July24/assets/objects/039_mug/1/decomposed/039_mug_1_decomposed_5.stl" scale="0.065 0.065 0.065"/>
+    <mesh name="039_mug_part_6" file="/home/yuan/ssd/datagen/datagen_July24/assets/objects/039_mug/1/decomposed/039_mug_1_decomposed_6.stl" scale="0.065 0.065 0.065"/>
+    <mesh name="039_mug_part_7" file="/home/yuan/ssd/datagen/datagen_July24/assets/objects/039_mug/1/decomposed/039_mug_1_decomposed_7.stl" scale="0.065 0.065 0.065"/>
+    <mesh name="039_mug_part_8" file="/home/yuan/ssd/datagen/datagen_July24/assets/objects/039_mug/1/decomposed/039_mug_1_decomposed_8.stl" scale="0.065 0.065 0.065"/>
+    <mesh name="039_mug_part_9" file="/home/yuan/ssd/datagen/datagen_July24/assets/objects/039_mug/1/decomposed/039_mug_1_decomposed_9.stl" scale="0.065 0.065 0.065"/>
+  </asset>
+  <worldbody>
+    <body name="039_mug">
+      <geom name="039_mug_geom_0" type="mesh" mesh="039_mug_part_0"/>
+      <geom name="039_mug_geom_1" type="mesh" mesh="039_mug_part_1"/>
+      <geom name="039_mug_geom_2" type="mesh" mesh="039_mug_part_2"/>
+      <geom name="039_mug_geom_3" type="mesh" mesh="039_mug_part_3"/>
+      <geom name="039_mug_geom_4" type="mesh" mesh="039_mug_part_4"/>
+      <geom name="039_mug_geom_5" type="mesh" mesh="039_mug_part_5"/>
+      <geom name="039_mug_geom_6" type="mesh" mesh="039_mug_part_6"/>
+      <geom name="039_mug_geom_7" type="mesh" mesh="039_mug_part_7"/>
+      <geom name="039_mug_geom_8" type="mesh" mesh="039_mug_part_8"/>
+      <geom name="039_mug_geom_9" type="mesh" mesh="039_mug_part_9"/>
+    </body>
+  </worldbody>
+</mujoco>

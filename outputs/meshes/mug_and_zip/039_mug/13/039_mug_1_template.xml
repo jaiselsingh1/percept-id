@@ -1,0 +1,12 @@
+<mujoco model="039_mug_1">
+  <asset>
+    <mesh name="039_mug_collision_1" file="039_mug_1.stl" scale="0.065 0.065 0.065"/> 
+  </asset>
+
+  <worldbody>
+<body name="039_mug_1">
+  <geom name="039_mug_collision_1" type="mesh" mesh="039_mug_collision_1" />
+
+</body>
+  </worldbody>
+</mujoco>

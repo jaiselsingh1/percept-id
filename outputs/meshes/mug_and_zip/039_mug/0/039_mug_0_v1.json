@@ -1,0 +1,69 @@
+[
+  {
+    "position": [
+      -0.6584939502815919,
+      0.44510922474732817,
+      0.2880115714376689
+    ],
+    "description": "Grasp Point:  the left middle side of the mug wall"
+  },
+  {
+    "position": [
+      0.03943172188450274,
+      -0.6258670785107704,
+      0.6902460086700858
+    ],
+    "description": "Grasp Point: handle top"
+  },
+  {
+    "position": [
+      0.025025583108442977,
+      -0.5483817421596423,
+      -0.353387858446296
+    ],
+    "description": "Grasp Point: handle down"
+  },
+
+  {
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "description": "Direction Point: the origin of the mug"
+  },
+
+  {
+    "position": [
+      0.1,
+      0,
+      0
+    ],
+    "description": "Direction Point: +x axis (right) of the mug"
+  },
+
+
+  {
+    "position": [
+      0,
+      0.1,
+      0
+    ],
+    "description": "Direction Point: +y axis (forward) of the mug"
+  },
+
+
+  {
+    "position": [
+      0,
+      0,
+      0.1
+    ],
+    "description": "Direction Point: +z axis (up) of the mug"
+  }
+
+  
+
+
+
+]
