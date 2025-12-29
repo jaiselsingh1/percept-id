@@ -35,7 +35,14 @@ import os
 import numpy as np 
 from typing import List, Dict, Tuple, Optional 
 from pathlib import Path 
-# from segment_anything import sam_model_registry, SamAutomaticMaskGenerator
+from urllib.request import urlretrieve
+
+
+models_dict = {
+    "vit_h": "sam_vit_h_4b8939.pth",
+    "vit_l": "sam_vit_l_0b3195.pth",
+    "vit_b": "sam_vit_b_01ec64.pth"
+}
 
 class Sam2Segmentor:
     def __init__(
@@ -47,7 +54,8 @@ class Sam2Segmentor:
         models_dir = Path(__file__).parent.parent.parent / "models"
         models_dir.mkdir(exist_ok = True)
 
-        checkpoint_path = models_dir / f"sam_{model_type}_XXXXX.pth"
+        model_path = models_dict[model_type]
+        checkpoint_path = models_dir / model_path
 
         # if weights don't exist, download the weights 
         if not checkpoint_path.exists():
@@ -57,7 +65,15 @@ class Sam2Segmentor:
         self.model_type = model_type 
         self.device = device
 
-        
+    def _download_model_weights(self,
+            model_type: str, 
+            checkpoint_path: str,
+    ):
+        base_url = "https://dl.fbaipublicfiles.com/segment_anything/"
+        model_path = models_dict[model_type]
+        full_path = base_url + model_path
+
+        urlretrieve(full_path, checkpoint_path)
 
 
 
