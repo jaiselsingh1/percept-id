@@ -5,8 +5,12 @@ from data_loaders.rgbd_loader import RGBDDataLoader
 from data_loaders.point_cloud import create_point_cloud_from_rgbd
 import numpy as np 
 import open3d as o3d 
+from pathlib import Path 
 
-loader = RGBDDataLoader(data_root="data")
+project_root = Path(__file__).parent.parent
+data_path = project_root / "data"
+
+loader = RGBDDataLoader(data_root=str(data_path))
 frame_data = loader.get_frame_data(0)
 
 # Define bounding box (table region from HW3)
