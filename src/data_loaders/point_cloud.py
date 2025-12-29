@@ -86,7 +86,7 @@ def transform_points_to_world(
       points_hom = np.hstack([points, ones]) 
       # each of the points now has a 1 at the end of it being in homogeneous coordinates
 
-      points_hom_T = points_hom.T  # FIX: was points.hom.T
+      points_hom_T = points_hom.T  
       # each point is now a column
       points_hom_world_T = camera_T_world @ points_hom_T
 
@@ -112,5 +112,7 @@ def create_point_cloud_from_rgbd(
      points_cam, colors = depth_to_camera_frame_point_cloud(depth, K, rgb)
      points = transform_points_to_world(points_cam, world_T_camera)
 
+     for point in points:
+          
      pcd = None
      return pcd 
