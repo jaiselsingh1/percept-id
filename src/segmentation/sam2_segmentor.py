@@ -31,11 +31,12 @@ SAM-2 Segmentation Module
 
 Provides interface for segmenting objects in RGB images using Meta's SAM-2 model.
 """
-import os
+# import os
 import numpy as np 
-from typing import List, Dict, Tuple, Optional 
+from typing import List, Dict, Tuple, Union, Optional 
 from pathlib import Path 
 from urllib.request import urlretrieve
+from tqdm import tqdm
 
 import sam2
 from sam2.build_sam import build_sam2
@@ -48,21 +49,20 @@ from sam2.automatic_mask_generator import SAM2AutomaticMaskGenerator
 #     "vit_b": "sam_vit_b_01ec64.pth"
 # }
 
-# for Sam v2 
-# these are paths within the samv2 package
+# for Sam 2.0 (configs are in sam2 package root)
 config_files = {
-    "tiny": "sam2.1_hiera_t.yaml", 
-    "small" :"sam2.1_hiera_s.yaml", 
-    "base_plus":"sam2.1_hiera_b+.yaml", 
-    "large":"sam2.1_hiera_l.yaml",
+    "tiny": "sam2_hiera_t.yaml",
+    "small": "sam2_hiera_s.yaml",
+    "base_plus": "sam2_hiera_b+.yaml",
+    "large": "sam2_hiera_l.yaml",
 }
 
 checkpoint_files = {
-      "tiny": "sam2.1_hiera_tiny.pt",
-      "small": "sam2.1_hiera_small.pt",
-      "base_plus": "sam2.1_hiera_base_plus.pt",
-      "large": "sam2.1_hiera_large.pt"
-  }
+    "tiny": "sam2_hiera_tiny.pt",
+    "small": "sam2_hiera_small.pt",
+    "base_plus": "sam2_hiera_base_plus.pt",
+    "large": "sam2_hiera_large.pt"
+}
 
 class Sam2Segmentor:
     def __init__(
@@ -82,14 +82,14 @@ class Sam2Segmentor:
             print(f"downloading {model_type} weights")
             self._download_model_weights(model_type, checkpoint_path)
 
-        self.model_type = model_type 
+        self.model_type = model_type
         self.device = device
 
-        sam2_dir = Path(sam2.__file__).parent
-        config_path = sam2_dir / "configs" / "sam2.1" / config_files[model_type]
+        # SAM-2 uses Hydra config - just pass the config filename (it searches in sam2 package)
+        config_name = config_files[model_type].replace(".yaml", "")  # Remove .yaml extension
 
-        # build the model 
-        self.model = build_sam2(str(config_path), str(checkpoint_path), device=self.device)
+        # build the model
+        self.model = build_sam2(config_name, str(checkpoint_path), device=self.device)
 
         # create the mask generator 
         self.mask_generator = SAM2AutomaticMaskGenerator(self.model)
@@ -97,13 +97,45 @@ class Sam2Segmentor:
 
     def _download_model_weights(self,
             model_type: str, 
-            checkpoint_path: str,
+            checkpoint_path: Union[str, Path],
     ):
-        base_url = "https://dl.fbaipublicfiles.com/segment_anything_2/092824/"
+        if model_type not in checkpoint_files:
+            raise ValueError(f"Invalid model_type: {model_type}. Choose from {list(checkpoint_files.keys())}")
+        base_url = "https://dl.fbaipublicfiles.com/segment_anything_2/072824/"  # SAM 2.0
+        
         model_path = checkpoint_files[model_type]
         full_path = base_url + model_path
 
-        urlretrieve(full_path, str(checkpoint_path))
+        # can print the status here using a callback function 
+        pbar = None 
+        last = 0 
+
+        def report_hook(blocknum: int, blocksize: int, total_size: int):
+            nonlocal pbar, last
+
+            downloaded = blocksize * blocknum
+            if pbar is None:
+                total = total_size if total_size and total_size > 0 else None
+                pbar = tqdm(
+                    total=total,
+                    unit="B",
+                    unit_scale=True,
+                    unit_divisor=1024,
+                    desc=f"Downloading {model_type}",
+                )
+            delta = downloaded - last
+
+            if delta > 0:
+                pbar.update(delta)
+                last = downloaded
+
+        try:
+            urlretrieve(full_path, str(checkpoint_path), reporthook=report_hook)
+        
+        # this exists because resources must be released (files, sockets, user memory)
+        finally:
+            if pbar is not None:
+                pbar.close()
 
     @staticmethod # signals that this method is not dependant on the object state 
     def _to_uint8_rgb(rgb: np.ndarray) -> np.ndarray:
@@ -118,7 +150,7 @@ class Sam2Segmentor:
             img = rgb.astype(np.float32)
             if img.max() <= 1.5:
                 img *= 255.0 # scale if [0, 1] range 
-            img = np.clip(img, 0, 255).astype(np.unit8)
+            img = np.clip(img, 0, 255).astype(np.uint8)
 
         return np.ascontiguousarray(img)
 
@@ -128,7 +160,7 @@ class Sam2Segmentor:
         # return list of mask dictionaries 
 
         rgb_uint8 = self._to_uint8_rgb(rgb)
-        list_masks = self.mask_generator.generate(rgb)
+        list_masks = self.mask_generator.generate(rgb_uint8)
         return list_masks
 
     def segment_with_point(self, rgb: np.ndarray, point: np.ndarray):
