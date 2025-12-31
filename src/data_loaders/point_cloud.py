@@ -95,18 +95,26 @@ def transform_points_to_world(
 
     return points_world
 
+
 def create_point_cloud_from_rgbd(
     rgb: np.ndarray,
     depth: np.ndarray,
     K: np.ndarray,
     world_T_camera: np.ndarray,
+    segmentation_mask: Optional[np.ndarray] = None,
     filter_invalid: bool = True,
-    bbox: Optional[np.ndarray] = None
+    bbox: Optional[np.ndarray] = None,
 ) -> o3d.geometry.PointCloud:
-    """The goal of this function is to use the above functions and create the point clouds"""
+    """Create point cloud from RGB-D with optional segmentation mask filtering"""
 
     points_cam, colors = depth_to_camera_frame_point_cloud(depth, K, rgb)
     points = transform_points_to_world(points_cam, world_T_camera)
+
+    # Flatten segmentation mask if provided (H, W) -> (H*W,)
+    if segmentation_mask is not None:
+        seg_mask_flat = segmentation_mask.reshape(-1)
+    else:
+        seg_mask_flat = np.ones(points.shape[0], dtype=bool)  # All points valid
 
     # Filter invalid points (where depth <= 0)
     if filter_invalid:
@@ -115,9 +123,9 @@ def create_point_cloud_from_rgbd(
 
         points = points[valid_mask]
         colors = colors[valid_mask]
+        seg_mask_flat = seg_mask_flat[valid_mask]  # Apply same filtering to mask
 
     # Filter by bounding box if provided
-    # the bbox here is an axis alligned bounding box
     if bbox is not None:
         bbox_min = bbox[0]
         bbox_max = bbox[1]
@@ -129,11 +137,60 @@ def create_point_cloud_from_rgbd(
         bbox_mask = x_in_range & y_in_range & z_in_range
         points = points[bbox_mask]
         colors = colors[bbox_mask]
+        seg_mask_flat = seg_mask_flat[bbox_mask]  # Apply same filtering to mask
+
+    # Filter by segmentation mask
+    points = points[seg_mask_flat]
+    colors = colors[seg_mask_flat]
 
     pcd = o3d.geometry.PointCloud()
-    # the pcd is a c++ wrapper in python which needs (N, 3) for the point's 3D positions 
-    # the pcd.colors is RGB colors 
     pcd.points = o3d.utility.Vector3dVector(points.astype(np.float64))
     pcd.colors = o3d.utility.Vector3dVector(colors.astype(np.float64))
 
     return pcd
+
+
+# def create_point_cloud_from_rgbd(
+#     rgb: np.ndarray,
+#     depth: np.ndarray,
+#     K: np.ndarray,
+#     world_T_camera: np.ndarray,
+#     filter_invalid: bool = True,
+#     bbox: Optional[np.ndarray] = None
+# ) -> o3d.geometry.PointCloud:
+#     """The goal of this function is to use the above functions and create the point clouds"""
+
+#     points_cam, colors = depth_to_camera_frame_point_cloud(depth, K, rgb)
+#     points = transform_points_to_world(points_cam, world_T_camera)
+
+#     # Filter invalid points (where depth <= 0)
+#     if filter_invalid:
+#         depth_flat = depth.reshape(-1)
+#         valid_mask = depth_flat > 0
+
+#         points = points[valid_mask]
+#         colors = colors[valid_mask]
+
+#     # Filter by bounding box if provided
+#     # the bbox here is an axis alligned bounding box
+#     if bbox is not None:
+#         bbox_min = bbox[0]
+#         bbox_max = bbox[1]
+
+#         x_in_range = (points[:, 0] >= bbox_min[0]) & (points[:, 0] <= bbox_max[0])
+#         y_in_range = (points[:, 1] >= bbox_min[1]) & (points[:, 1] <= bbox_max[1])
+#         z_in_range = (points[:, 2] >= bbox_min[2]) & (points[:, 2] <= bbox_max[2])
+
+#         bbox_mask = x_in_range & y_in_range & z_in_range
+#         points = points[bbox_mask]
+#         colors = colors[bbox_mask]
+
+#     pcd = o3d.geometry.PointCloud()
+#     # the pcd is a c++ wrapper in python which needs (N, 3) for the point's 3D positions 
+#     # the pcd.colors is RGB colors 
+#     pcd.points = o3d.utility.Vector3dVector(points.astype(np.float64))
+#     pcd.colors = o3d.utility.Vector3dVector(colors.astype(np.float64))
+
+#     return pcd
+
+
