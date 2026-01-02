@@ -24,7 +24,7 @@ for cam_name in ['front', 'wrist']:
     rgb = cam_data['rgb']
     depth = cam_data['depth']
     K = cam_data['intrinsics']
-    world_T_camera = cam_data['extrinsics']
+    camera_T_world = cam_data['extrinsics']
 
     masks = segmentor.segment_image(rgb)
     print(f"Found {len(masks)} objects")
@@ -48,7 +48,7 @@ for cam_name in ['front', 'wrist']:
         rgb=rgb,
         depth=depth,
         K=K,
-        world_T_camera=world_T_camera,
+        camera_T_world=camera_T_world,
         segmentation_mask=seg_mask_flat
     )
 
@@ -57,6 +57,8 @@ for cam_name in ['front', 'wrist']:
     if cam_name == 'wrist':
         colors = np.asarray(pcd.colors)
         colors[:, 2] = np.clip(colors[:, 2] * 1.2, 0, 1)
+        # this is to go from np.ndarray to the C++ equivalent 
+        # handles 64 bit floats (doubles)
         pcd.colors = o3d.utility.Vector3dVector(colors)
     
     point_clouds.append(pcd)

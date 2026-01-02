@@ -168,33 +168,28 @@ class RGBDDataLoader:
             frame_idx: Frame index (required for wrist camera)
 
         Returns:
-            4x4 transformation matrix from world to camera frame
+            4x4 transformation matrix from world to camera (camera_T_world)
         """
-        # Fixed cameras: just return calibration extrinsics
         if camera_name != 'wrist':
-            world_T_camera = np.array(self.extrinsics[camera_name], dtype=np.float32)
-            return world_T_camera
+            camera_T_world = np.array(self.extrinsics[camera_name], dtype=np.float32)
+            return camera_T_world
 
-        # Wrist camera: compute time-varying transform using robot state
         if frame_idx is None:
             raise ValueError("frame_idx is required for wrist camera")
 
-        # Get robot end-effector pose at this frame
         robot_state = self.get_robot_state(frame_idx)
-        ee_pos = np.array(robot_state['obs.ee_pos'])  # [x, y, z]
-        ee_quat = np.array(robot_state['obs.ee_quat'])  # [x, y, z, w]
+        ee_pos = np.array(robot_state['obs.ee_pos'])
+        ee_quat = np.array(robot_state['obs.ee_quat'])
 
-        # Build world_T_ee transform from position + quaternion
         from utils.transforms import pose_to_transform_matrix
         world_T_ee = pose_to_transform_matrix(ee_pos, ee_quat)
 
-        # Calibration extrinsics for wrist is ee_T_camera (fixed offset)
         ee_T_camera = np.array(self.extrinsics[camera_name], dtype=np.float32)
 
-        # Compose transforms: world -> ee -> camera
-        world_T_camera = world_T_ee @ ee_T_camera
+        # Compose: world -> ee -> camera
+        camera_T_world = world_T_ee @ ee_T_camera
 
-        return world_T_camera
+        return camera_T_world
 
     def get_robot_state(self, frame_idx: int) -> Dict:
         """

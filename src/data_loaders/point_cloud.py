@@ -57,22 +57,21 @@ def depth_to_camera_frame_point_cloud(
 
 def transform_points_to_world(
     points: np.ndarray,
-    world_T_camera: np.ndarray
+    camera_T_world: np.ndarray
 ) -> np.ndarray:
-    """This is a function that takes in the points in the camera frame and then projects them onto the world
-    frame using the extrinsics matrix
+    """Transform points from camera frame to world frame using extrinsics.
 
-    world_T_camera = [
-    [r11, r12, r13, tx],  # Rotation + translation in X
-    [r21, r22, r23, ty],  # Rotation + translation in Y
-    [r31, r32, r33, tz],  # Rotation + translation in Z
-    [ 0,   0,   0,   1]   # Homogeneous row ]
-    where:
-    - Top-left 3×3 block: Rotation matrix (R)
-    - Right column (first 3 rows): Translation vector (t)
+    camera_T_world transforms FROM world TO camera, so we invert it.
+
+    Args:
+        points: (N, 3) points in camera frame
+        camera_T_world: 4x4 transform from world to camera (extrinsics)
+
+    Returns:
+        (N, 3) points in world frame
     """
     N = points.shape[0]
-    camera_T_world = np.linalg.inv(world_T_camera)
+    world_T_camera = np.linalg.inv(camera_T_world)
 
     # numpy's inv() knows how to handle the special cases of transformation matrices
     # next convert to homogeneous coordinates
@@ -84,10 +83,8 @@ def transform_points_to_world(
     # each of the points now has a 1 at the end of it being in homogeneous coordinates
 
     points_hom_T = points_hom.T
-    # each point is now a column
-    points_hom_world_T = camera_T_world @ points_hom_T
+    points_hom_world_T = world_T_camera @ points_hom_T
 
-    # switching back to the row format
     points_hom_world = points_hom_world_T.T
 
     # extract the 3D coordinates aka bring it back from being homogeneous
@@ -100,7 +97,7 @@ def create_point_cloud_from_rgbd(
     rgb: np.ndarray,
     depth: np.ndarray,
     K: np.ndarray,
-    world_T_camera: np.ndarray,
+    camera_T_world: np.ndarray,
     segmentation_mask: Optional[np.ndarray] = None,
     filter_invalid: bool = True,
     bbox: Optional[np.ndarray] = None,
@@ -108,7 +105,7 @@ def create_point_cloud_from_rgbd(
     """Create point cloud from RGB-D with optional segmentation mask filtering"""
 
     points_cam, colors = depth_to_camera_frame_point_cloud(depth, K, rgb)
-    points = transform_points_to_world(points_cam, world_T_camera)
+    points = transform_points_to_world(points_cam, camera_T_world)
 
     # Flatten segmentation mask if provided (H, W) -> (H*W,)
     if segmentation_mask is not None:

@@ -16,7 +16,7 @@ frame_data = loader.get_frame_data(0, camera_name='front')  # Use front camera
 rgb = frame_data['cameras']['front']['rgb']
 depth = frame_data['cameras']['front']['depth']
 K = frame_data['cameras']['front']['intrinsics']
-world_T_camera = frame_data['cameras']['front']['extrinsics']
+camera_T_world = frame_data['cameras']['front']['extrinsics']
 
 # run segmentation
 segmentor = Sam2Segmentor(model_type="tiny")
@@ -61,7 +61,7 @@ pcd = create_point_cloud_from_rgbd(
     rgb=rgb,
     depth=depth,
     K=K,
-    world_T_camera=world_T_camera,
+    camera_T_world=camera_T_world,
     segmentation_mask=seg_mask_flat
 )
 
