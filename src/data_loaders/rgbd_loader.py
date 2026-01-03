@@ -168,11 +168,11 @@ class RGBDDataLoader:
             frame_idx: Frame index (required for wrist camera)
 
         Returns:
-            4x4 transformation matrix from world to camera (camera_T_world)
+            4x4 transformation matrix from world to camera (world_T_camera)
         """
         if camera_name != 'wrist':
-            camera_T_world = np.array(self.extrinsics[camera_name], dtype=np.float32)
-            return camera_T_world
+            world_T_camera = np.array(self.extrinsics[camera_name], dtype=np.float32)
+            return world_T_camera
 
         if frame_idx is None:
             raise ValueError("frame_idx is required for wrist camera")
@@ -182,14 +182,13 @@ class RGBDDataLoader:
         ee_quat = np.array(robot_state['obs.ee_quat'])
 
         from utils.transforms import pose_to_transform_matrix
-        world_T_ee = pose_to_transform_matrix(ee_pos, ee_quat)
+        ee_T_world = pose_to_transform_matrix(ee_pos, ee_quat)
+        camera_T_ee = np.array(self.extrinsics[camera_name], dtype=np.float32)
 
-        ee_T_camera = np.array(self.extrinsics[camera_name], dtype=np.float32)
+        # V3: Best empirical result (0.2971m centroid distance)
+        world_T_camera = ee_T_world @ camera_T_ee
 
-        # Compose: world -> ee -> camera
-        camera_T_world = world_T_ee @ ee_T_camera
-
-        return camera_T_world
+        return world_T_camera
 
     def get_robot_state(self, frame_idx: int) -> Dict:
         """

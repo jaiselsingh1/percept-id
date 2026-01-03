@@ -27,5 +27,20 @@ def estimate_pose_with_icp(
     print(f"ICP Result")
     print(f"Fitness: {result.fitness:.4f}")
     print(f"RMSE: {result.inlier_rmse:.6f} m")
+    print(f" Converged: {result.fitness > 0.5}")
 
     return result.transformation
+
+project_root = Path(__file__).parent.parent
+data_path = project_root / "data"
+loader = RGBDDataLoader(data_root = str(data_path))
+frame_idx = 0 
+
+segmentor = Sam2Segmentor(model_type = "tiny")
+point_clouds = []
+
+for cam_name in ["front", "wrist"]:
+    print(f"Processing {cam_name}")
+
+    frame_data = loader.get_frame_data(frame_idx, camera_name = cam_name)
+    

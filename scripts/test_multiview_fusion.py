@@ -24,7 +24,7 @@ for cam_name in ['front', 'wrist']:
     rgb = cam_data['rgb']
     depth = cam_data['depth']
     K = cam_data['intrinsics']
-    camera_T_world = cam_data['extrinsics']
+    world_T_camera = cam_data['extrinsics']
 
     masks = segmentor.segment_image(rgb)
     print(f"Found {len(masks)} objects")
@@ -35,7 +35,7 @@ for cam_name in ['front', 'wrist']:
         mask = masks_sorted[i]
         print(f"  [{i}] Area={mask['area']:6d}, BBox={mask['bbox']}")
 
-    selected_idx = 4
+    selected_idx = 0
     selected_mask = masks_sorted[selected_idx]
 
     print(f"\nSelected object {selected_idx}:")
@@ -48,7 +48,7 @@ for cam_name in ['front', 'wrist']:
         rgb=rgb,
         depth=depth,
         K=K,
-        camera_T_world=camera_T_world,
+        world_T_camera=world_T_camera,
         segmentation_mask=seg_mask_flat
     )
 
@@ -72,3 +72,7 @@ print(f"  Front camera contribution: {len(point_clouds[0].points)} points")
 print(f"  Wrist camera contribution: {len(point_clouds[1].points)} points")
 
 o3d.visualization.draw_geometries([merged_pcd])
+
+# extrinsics always be world to camera 
+# keep everything consistent (keep notation the same)
+# the outer terms should cancel out 
