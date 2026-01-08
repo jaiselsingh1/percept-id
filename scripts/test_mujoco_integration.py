@@ -51,7 +51,6 @@ model_mesh.scale(scale_factor, center=model_mesh.get_center())
 model_pcd = model_mesh.sample_points_uniformly(number_of_points=5000)
 
 # Run pose estimation
-print("\n=== Running pose estimation ===")
 estimator = ICPPoseEstimator(voxel_size=0.005, icp_threshold=0.02)
 world_T_model, fitness, rmse = estimator.estimate_pose(model_pcd, observed_pcd)
 

@@ -59,5 +59,3 @@ class ICPPoseEstimator:
                         criteria = o3d.pipelines.registration.ICPConvergenceCriteria(max_iteration = self.max_iterations)
                 )
                 return result.transformation, result.fitness, result.inlier_rmse
-
-
