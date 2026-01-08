@@ -2,10 +2,12 @@ from data_loaders.rgbd_loader import RGBDDataLoader
 from data_loaders.point_cloud import create_point_cloud_from_rgbd
 from segmentation.sam2_segmentor import Sam2Segmentor
 from pose_estimation.icp_estimator import ICPPoseEstimator
+from mujoco_integration.scene_builder import MuJoCoSceneBuilder
 from utils.transforms import transform_to_pose
 import open3d as o3d
 import numpy as np
 from pathlib import Path
+import shutil
 
 project_root = Path(__file__).parent.parent
 data_path = project_root / "data"
@@ -13,7 +15,6 @@ data_path = project_root / "data"
 loader = RGBDDataLoader(data_root=str(data_path))
 frame_idx = 0
 
-print("=== Segmenting target object ===")
 segmentor = Sam2Segmentor(model_type="tiny")
 
 frame_data = loader.get_frame_data(frame_idx, camera_name='front')
@@ -27,15 +28,7 @@ world_T_camera = cam_data['extrinsics']
 masks = segmentor.segment_image(rgb)
 masks_sorted = sorted(masks, key=lambda m: m['area'], reverse=True)
 
-print(f"\nFound {len(masks)} objects")
-print("Top 5 objects:")
-for i in range(min(5, len(masks_sorted))):
-    mask = masks_sorted[i]
-    print(f"  [{i}] Area={mask['area']:6d} pixels")
-
 target_idx = 1
-print(f"\n→ Selected object {target_idx} as target")
-
 seg_mask = masks_sorted[target_idx]['segmentation']
 
 observed_pcd = create_point_cloud_from_rgbd(
@@ -46,45 +39,48 @@ observed_pcd = create_point_cloud_from_rgbd(
     segmentation_mask=seg_mask
 )
 
-print(f"\nObserved point cloud: {len(observed_pcd.points)} points")
+print(f"Observed point cloud: {len(observed_pcd.points)} points")
 
 # Load CAD model
-print("\n loading the CAD model")
 model_path = project_root / "outputs" / "meshes" / "mug_and_zip" / "039_mug" / "0" / "039_mug_0.stl"
 model_mesh = o3d.io.read_triangle_mesh(str(model_path))
-print(f"Loaded mesh with {len(model_mesh.vertices)} vertices, {len(model_mesh.triangles)} triangles")
 
-# Scale model to real-world size (STL is ~1.93m, real mug is ~0.12m)
 scale_factor = 0.12 / 1.93
 model_mesh.scale(scale_factor, center=model_mesh.get_center())
-print(f"Scaled model by {scale_factor:.4f}x")
 
 model_pcd = model_mesh.sample_points_uniformly(number_of_points=5000)
 
 # Run pose estimation
-print("\n running icp pose estimation")
+print("\n=== Running pose estimation ===")
 estimator = ICPPoseEstimator(voxel_size=0.005, icp_threshold=0.02)
 world_T_model, fitness, rmse = estimator.estimate_pose(model_pcd, observed_pcd)
 
-print(f"ICP Fitness: {fitness:.4f}")
-print(f"ICP RMSE: {rmse:.6f} m")
-
 position, quaternion = transform_to_pose(world_T_model)
 
-print(f"\n estimated object pose")
+print(f"ICP Fitness: {fitness:.4f}")
+print(f"ICP RMSE: {rmse:.6f} m")
 print(f"Position (x, y, z): {position}")
 print(f"Quaternion (x, y, z, w): {quaternion}")
 
-# Visualize
-print("\n visualisation")
-print("Gray = Observed point cloud")
-print("Red = Aligned CAD model")
+# Build MuJoCo scene
+scene_builder = MuJoCoSceneBuilder(output_path=str(project_root / "outputs" / "mujoco_scene.xml"))
 
-observed_vis = estimator.preprocess_point_cloud(observed_pcd)
-observed_vis.paint_uniform_color([0.5, 0.5, 0.5])
+scene_builder.add_object(
+    name="mug",
+    mesh_path=model_path,
+    position=position,
+    quaternion=quaternion,
+    scale=scale_factor
+)
 
-model_aligned = model_pcd.transform(world_T_model)
-model_vis = estimator.preprocess_point_cloud(model_aligned)
-model_vis.paint_uniform_color([1, 0, 0])
+scene_builder.save_scene()
 
-o3d.visualization.draw_geometries([observed_vis, model_vis])
+# Copy mesh to meshes directory
+meshdir = scene_builder.get_meshdir()
+meshdir.mkdir(parents=True, exist_ok=True)
+dest_mesh = meshdir / model_path.name
+shutil.copy(model_path, dest_mesh)
+print(f"Copied mesh to: {dest_mesh}")
+
+print(f"Scene XML: {scene_builder.output_path}")
+print(f"Load in MuJoCo viewer with: python -m mujoco.viewer {scene_builder.output_path}")

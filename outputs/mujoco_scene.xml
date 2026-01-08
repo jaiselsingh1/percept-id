@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<mujoco model="reconstructed_scene">
+  <compiler angle="radian" meshdir="meshes"/>
+  <asset>
+    <mesh name="mug_mesh" file="039_mug_0.stl" scale="0.06217616580310881 0.06217616580310881 0.06217616580310881"/>
+  </asset>
+  <worldbody>
+    <light pos="0 0 3" dir="0 0 -1" diffuse="0.8 0.8 0.8"/>
+    <geom name="floor" type="plane" size="2 2 0.1" rgba="0.8 0.8 0.8 1"/>
+    <body name="mug" pos="-0.07662535429537075 -0.3404782841336301 -0.0035901426074702565" quat="0.9944113291757984 -0.0009440295764038193 -0.10549276849377394 -0.004061158763183601">
+      <geom type="mesh" mesh="mug_mesh" rgba="0.8 0.2 0.2 1"/>
+      <freejoint/>
+    </body>
+  </worldbody>
+</mujoco>
