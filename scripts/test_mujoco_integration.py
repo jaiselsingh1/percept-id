@@ -8,6 +8,7 @@ import open3d as o3d
 import numpy as np
 from pathlib import Path
 import shutil
+from scipy.spatial.transform import Rotation
 
 project_root = Path(__file__).parent.parent
 data_path = project_root / "data"
@@ -30,19 +31,22 @@ masks_sorted = sorted(masks, key=lambda m: m['area'], reverse=True)
 
 print(f"Found {len(masks_sorted)} segments")
 
-# Define objects to process: (segment_idx, name, model_path, approximate_scale)
+# Define objects to process: (segment_idx, name, model_path, scale, initial_rotation)
+# Scale factors from XML templates: mug=0.08, rack=1.1
 objects_to_process = [
     {
         'segment_idx': 1,
         'name': 'mug',
         'model_path': project_root / "outputs" / "meshes" / "mug_and_zip" / "039_mug" / "0" / "039_mug_0.stl",
-        'scale': 0.36
+        'scale': 0.08,  # from 039_mug_0_template.xml
+        'init_rotation': [-90, 0, 0]  # -90° around X axis
     },
     {
         'segment_idx': 0,
         'name': 'rack',
         'model_path': project_root / "outputs" / "meshes" / "mug_and_zip" / "040_rack" / "0" / "040_rack_0.stl",
-        'scale': 4.77
+        'scale': 1.1,  # from 040_rack_0_template.xml
+        'init_rotation': [0, 0, 0]  # no rotation needed
     }
 ]
 
@@ -56,8 +60,9 @@ for obj_info in objects_to_process:
     name = obj_info['name']
     model_path = obj_info['model_path']
     scale_factor = obj_info['scale']
+    init_rotation = obj_info['init_rotation']
 
-    print(f"\n--- Processing {name} (segment {segment_idx}) ---")
+    print(f"\n processing {name} (segment {segment_idx})")
 
     # Get segmentation mask
     seg_mask = masks_sorted[segment_idx]['segmentation']
@@ -76,6 +81,13 @@ for obj_info in objects_to_process:
     # Load and scale CAD model
     model_mesh = o3d.io.read_triangle_mesh(str(model_path))
     model_mesh.scale(scale_factor, center=model_mesh.get_center())
+
+    # Apply initial rotation if specified
+    if init_rotation != [0, 0, 0]:
+        R = Rotation.from_euler('xyz', init_rotation, degrees=True).as_matrix()
+        model_mesh.rotate(R, center=model_mesh.get_center())
+        print(f"Applied initial rotation: {init_rotation}")
+
     model_pcd = model_mesh.sample_points_uniformly(number_of_points=5000)
 
     # Run pose estimation
@@ -105,7 +117,5 @@ for obj_info in objects_to_process:
 
 # Save the scene
 scene_builder.save_scene()
-
-print(f"\n=== Multi-object scene complete ===")
 print(f"Scene XML: {scene_builder.output_path}")
 print(f"Load in MuJoCo viewer with: python -m mujoco.viewer {scene_builder.output_path}")

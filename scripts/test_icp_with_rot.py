@@ -52,3 +52,36 @@ best_fitness = 0
 best_config = None
 
 # loop to test
+for scale in scales_to_try:
+    for rot_name, rot_angles in rot_to_try:
+        # prepare the model 
+        model = o3d.geometry.TriangleMesh(mug_mesh)
+        model.scale(scale, center = model.get_center())
+
+        # apply rotation
+        if rot_angles != [0, 0, 0]:
+            R = Rotation.from_euler("xyz", rot_angles, degrees = True).as_matrix()
+            model.rotate(R, center = model.get_center())
+
+        model_pcd = model.sample_points_uniformly(number_of_points=5000)
+
+        # run ICP
+        world_T_model, fitness, rmse = estimator.estimate_pose(model_pcd, mug_pcd_observed)
+
+        if fitness > best_fitness:
+            best_fitness = fitness
+            best_config = {
+                'scale': scale,
+                'rotation': rot_name,
+                'rot_angles': rot_angles,
+                'fitness': fitness,
+                'rmse': rmse,
+                'transform': world_T_model
+            }
+            print(f"New best: scale={scale:.3f}, rot={rot_name:12s}, fitness={fitness:.4f}, RMSE={rmse:.6f}")
+
+print(f"\n best mug config")
+print(f"Scale: {best_config['scale']}")
+print(f"Initial Rotation: {best_config['rotation']} {best_config['rot_angles']}")
+print(f"ICP Fitness: {best_config['fitness']:.4f}")
+print(f"ICP RMSE: {best_config['rmse']:.6f} m")
