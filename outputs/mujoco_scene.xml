@@ -2,13 +2,18 @@
 <mujoco model="reconstructed_scene">
   <compiler angle="radian" meshdir="meshes"/>
   <asset>
-    <mesh name="mug_mesh" file="039_mug_0.stl" scale="0.06217616580310881 0.06217616580310881 0.06217616580310881"/>
+    <mesh name="mug_mesh" file="039_mug_0.stl" scale="0.36 0.36 0.36"/>
+    <mesh name="rack_mesh" file="040_rack_0.stl" scale="4.77 4.77 4.77"/>
   </asset>
   <worldbody>
     <light pos="0 0 3" dir="0 0 -1" diffuse="0.8 0.8 0.8"/>
     <geom name="floor" type="plane" size="2 2 0.1" rgba="0.8 0.8 0.8 1"/>
-    <body name="mug" pos="-0.07662535429537075 -0.3404782841336301 -0.0035901426074702565" quat="0.9944113291757984 -0.0009440295764038193 -0.10549276849377394 -0.004061158763183601">
+    <body name="mug" pos="-0.04394976462301801 -0.36245115841835374 -0.013269990150163627" quat="1.0 0.0 0.0 0.0">
       <geom type="mesh" mesh="mug_mesh" rgba="0.8 0.2 0.2 1"/>
+      <freejoint/>
+    </body>
+    <body name="rack" pos="0.17173129805293577 0.0595663289877167 0.14324345137254932" quat="0.9993490168240358 -0.019665237364791803 -0.025632303683955703 0.016056338937410566">
+      <geom type="mesh" mesh="rack_mesh" rgba="0.8 0.2 0.2 1"/>
       <freejoint/>
     </body>
   </worldbody>
