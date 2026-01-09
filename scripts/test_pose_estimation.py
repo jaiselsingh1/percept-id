@@ -13,7 +13,6 @@ data_path = project_root / "data"
 loader = RGBDDataLoader(data_root=str(data_path))
 frame_idx = 0
 
-print("=== Segmenting target object ===")
 segmentor = Sam2Segmentor(model_type="tiny")
 
 frame_data = loader.get_frame_data(frame_idx, camera_name='front')

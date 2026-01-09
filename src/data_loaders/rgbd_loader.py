@@ -50,8 +50,8 @@ class RGBDDataLoader:
         self.num_frames = self._count_frames()
 
         print(f"[RGBDDataLoader] Initialized with:")
-        print(f"  - Cameras: {self.camera_names}")
-        print(f"  - Frames: {self.num_frames}")
+        print(f"  cameras: {self.camera_names}")
+        print(f"  frames: {self.num_frames}")
 
     def _discover_cameras(self) -> list:
         """Find all available camera directories."""
