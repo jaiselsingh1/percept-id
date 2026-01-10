@@ -33,21 +33,24 @@ print(f"Found {len(masks_sorted)} segments")
 
 # Define objects to process: (segment_idx, name, model_path, scale, initial_rotation)
 # Scale factors from XML templates: mug=0.08, rack=1.1
+# NOTE: Segment 5 is the mug (verified)
+# NOTE: Rack segmentation issue - segment 0 is table, rack not properly segmented by SAM-2
 objects_to_process = [
     {
-        'segment_idx': 1,
+        'segment_idx': 5,  # segment 5 is the mug (verified)
         'name': 'mug',
         'model_path': project_root / "outputs" / "meshes" / "mug_and_zip" / "039_mug" / "0" / "039_mug_0.stl",
         'scale': 0.08,  # from 039_mug_0_template.xml
-        'init_rotation': [-90, 0, 0]  # -90° around X axis
+        'init_rotation': [0, 0, 0]  # Start with no rotation
     },
-    {
-        'segment_idx': 0,
-        'name': 'rack',
-        'model_path': project_root / "outputs" / "meshes" / "mug_and_zip" / "040_rack" / "0" / "040_rack_0.stl",
-        'scale': 1.1,  # from 040_rack_0_template.xml
-        'init_rotation': [0, 0, 0]  # no rotation needed
-    }
+    # Rack commented out - needs text-conditioned segmentation or manual annotation
+    # {
+    #     'segment_idx': 0,
+    #     'name': 'rack',
+    #     'model_path': project_root / "outputs" / "meshes" / "mug_and_zip" / "040_rack" / "0" / "040_rack_0.stl",
+    #     'scale': 1.1,
+    #     'init_rotation': [0, 0, 0]
+    # }
 ]
 
 # Initialize MuJoCo scene builder and pose estimator

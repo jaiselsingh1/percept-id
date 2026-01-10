@@ -3,17 +3,12 @@
   <compiler angle="radian" meshdir="meshes"/>
   <asset>
     <mesh name="mug_mesh" file="039_mug_0.stl" scale="0.08 0.08 0.08"/>
-    <mesh name="rack_mesh" file="040_rack_0.stl" scale="1.1 1.1 1.1"/>
   </asset>
   <worldbody>
     <light pos="0 0 3" dir="0 0 -1" diffuse="0.8 0.8 0.8"/>
     <geom name="floor" type="plane" size="2 2 0.1" rgba="0.8 0.8 0.8 1"/>
-    <body name="mug" pos="0.03317620329088119 -0.3270125560379936 -0.006425686301899042" quat="0.9397118453349091 0.027157141371882836 0.2657468880576859 0.21350112153668707">
+    <body name="mug" pos="0.3099437562835502 -0.19979555703690105 0.057057127789234385" quat="0.9968560452801367 -0.0750189772876383 -0.025301606975592684 -0.0031633399462080002">
       <geom type="mesh" mesh="mug_mesh" rgba="0.8 0.2 0.2 1"/>
-      <freejoint/>
-    </body>
-    <body name="rack" pos="0.19565013653177657 0.14029601828985383 0.013510953887757214" quat="0.9794127968443553 -0.010836746303400568 0.01180378426135682 0.20123073568464764">
-      <geom type="mesh" mesh="rack_mesh" rgba="0.8 0.2 0.2 1"/>
       <freejoint/>
     </body>
   </worldbody>

@@ -25,4 +25,10 @@ dependencies = [
     # Utilities
     "matplotlib>=3.7.0",
     "tqdm>=4.65.0",
+    "ultralytics>=8.3.250",
+    "ipdb>=0.13.13",
+    "clip",
 ]
+
+[tool.uv.sources]
+clip = { git = "https://github.com/ultralytics/CLIP.git" }
